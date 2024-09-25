@@ -6,10 +6,11 @@ import json
 from dotenv import load_dotenv
 
 load_dotenv()
-firebase_cred_json = os.getenv('FIREBASECREDENTIALS')
+
 
 # Ensure Firebase is initialized only once
 if not firebase_admin._apps:
+    firebase_cred_json = os.getenv('FIREBASECREDENTIALS')
     firebase_creds_dict= json.loads(firebase_cred_json)
 
     cred = credentials.Certificate(firebase_creds_dict)
