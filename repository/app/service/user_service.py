@@ -1,5 +1,4 @@
 from ..config import db, auth, verify_token
-from flask import Flask, request, jsonify
 import requests
 import os
 from dotenv import load_dotenv
