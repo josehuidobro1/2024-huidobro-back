@@ -5,20 +5,25 @@ import os
 import json
 from dotenv import load_dotenv
 
-load_dotenv(dotenv_path='.env')
+load_dotenv()
 
 
 # Ensure Firebase is initialized only once
 if not firebase_admin._apps:
     firebase_cred_json = os.getenv('FIREBASECREDENTIALS')
 
-    if firebase_cred_json is not None:
-        print(firebase_cred_json)
-        firebase_creds_dict = json.loads(firebase_cred_json)
+    if firebase_cred_json:
+        try:
+            # Convert the JSON string to a Python dictionary
+            firebase_creds_dict = json.loads(firebase_cred_json)
+        except json.JSONDecodeError as e:
+            raise ValueError(
+                "Invalid JSON format for Firebase credentials.") from e
     else:
         raise ValueError(
-            "Firebase credentials JSON is missing or not set properly.")
+            "Firebase credentials JSON is missing or not set properly in the .env file.")
 
+    # Use the credentials dictionary to initialize Firebase
     cred = credentials.Certificate(firebase_creds_dict)
     firebase_admin.initialize_app(cred)
 
