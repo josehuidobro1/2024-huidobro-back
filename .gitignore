@@ -21,4 +21,5 @@ SqueakDebug.log
 /github-cache
 github-*.zip
 .env
-repository\app\key.json
+**/__pycache__/
+*.pyc
