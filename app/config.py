@@ -5,7 +5,7 @@ import os
 import json
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(dotenv_path='.env')
 
 
 # Ensure Firebase is initialized only once
