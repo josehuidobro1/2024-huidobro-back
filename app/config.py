@@ -11,7 +11,9 @@ load_dotenv(dotenv_path='.env')
 # Ensure Firebase is initialized only once
 if not firebase_admin._apps:
     firebase_cred_json = os.getenv('FIREBASECREDENTIALS')
+
     if firebase_cred_json is not None:
+        print(firebase_cred_json)
         firebase_creds_dict = json.loads(firebase_cred_json)
     else:
         raise ValueError(

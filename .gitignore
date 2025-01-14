@@ -23,3 +23,6 @@ github-*.zip
 .env
 **/__pycache__/
 *.pyc
+
+key.json
+*.json
