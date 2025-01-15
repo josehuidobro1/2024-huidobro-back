@@ -9,23 +9,18 @@ load_dotenv()
 
 
 # Ensure Firebase is initialized only once
-if not firebase_admin._apps:
-    firebase_cred_json = os.getenv('FIREBASECREDENTIALS')
-
-    if firebase_cred_json:
-        try:
-            # Convert the JSON string to a Python dictionary
-            firebase_creds_dict = json.loads(firebase_cred_json)
-        except json.JSONDecodeError as e:
-            raise ValueError(
-                "Invalid JSON format for Firebase credentials.") from e
-    else:
-        raise ValueError(
-            "Firebase credentials JSON is missing or not set properly in the .env file.")
-
-    # Use the credentials dictionary to initialize Firebase
-    cred = credentials.Certificate(firebase_creds_dict)
-    firebase_admin.initialize_app(cred)
+firebase_cred_json = os.environ.get("FIREBASECREDENTIALS")
+if firebase_cred_json:
+    try:
+        firebase_creds_dict = json.loads(firebase_cred_json)
+        cred = credentials.Certificate(firebase_creds_dict)
+        firebase_admin.initialize_app(cred)
+        print("Firebase initialized successfully.")
+    except json.JSONDecodeError:
+        raise ValueError("Invalid JSON in FIREBASECREDENTIALS.")
+else:
+    raise ValueError(
+        "Firebase credentials not found in environment variables.")
 
 # Firestore client
 db = firestore.client()
