@@ -1,15 +1,16 @@
 from fastapi import APIRouter, Depends, Request, HTTPException
 from app.models.food import Food
-from app.controllers.user_controller import addGoal,update_user_info, delete_user_by_id, user_by_id, resetPassword,update_user_validation,get_all_Users
+from app.controllers.allergies_controller import get_allergies, allergieLog, updateAllergie
+from app.controllers.user_controller import addGoal, update_user_info, delete_user_by_id, user_by_id, resetPassword, update_user_validation, get_all_Users
 from app.controllers.userTotCal_controller import updateDailyCalories_controller, createUserTotCal, get_TotCal, get_streak
 from app.controllers.food_controller import register_new_food, get_foods, get_food_by_id
 from app.controllers.category_controller import userCategoryLog, get_category, update_category_controller, delete_category
 from app.controllers.catFood_controller import CategoryFoodLog, get_Food_perCat, delete_Catfood, delete_AllCatfoodByCategory
-from app.controllers.plate_controller import get_publicPlates_notUser,update_user_plates_to_verified,plateLog, get_plate_user, delete_plate, update_Plate, get_platebyID, get_publicPlates
+from app.controllers.plate_controller import get_publicPlates_notUser, update_user_plates_to_verified, plateLog, get_plate_user, delete_plate, update_Plate, get_platebyID, get_publicPlates
 from app.controllers.plateFood_controller import PlateFoodLog, update_PlateFood_controller, delete_PlateFood, get_plateFood
 from app.controllers.drinkType_controller import register_new_drinkType, get_drinkTypes, get_drinkType_by_id, UserDrinkTypes, delete_DrinkType
 from app.controllers.review_controller import reviewLog, UpdateReview, get_plateReviews, get_fiveStarReview
-from app.controllers.notification_controller import getNotis,NotificationRead
+from app.controllers.notification_controller import getNotis, NotificationRead
 from app.models.user import UserRegister, ResetPassword, UserForgotPassword, UserLogin, UpdateUserData
 from app.controllers.drink_controller import register_new_drink, get_drinks, get_drink_by_id, deletedrink, Updatedrink, Grouped_Drinks
 # from app.controllers.user_controller import
@@ -22,6 +23,7 @@ from app.models.drinkType import DrinkType
 from app.models.review import Review
 from app.models.plateFood import PlateFood
 from app.models.userTotCal import UserTotCal, CalUpdateModel
+from app.models.allergies import Allergies
 from app.controllers.foodUser_controller import update_userFood_controller, userFoodLog, get_meals_user, delete_meal
 from datetime import datetime
 from .config import verify_token
@@ -314,26 +316,52 @@ async def get_streakuser(user_id: str):
 async def get_fivestarReviewuser(user_id: str):
     return get_fiveStarReview(user_id)
 
+
 @router.get("/updateUsersandPlateVerification/", tags=["gamification"])
 def scheduled_verification_task():
     users = get_all_Users()
     for user in users:
-        update_user_plates_to_verified(user['id_user'])  # Access 'id_user' using dictionary key
+        # Access 'id_user' using dictionary key
+        update_user_plates_to_verified(user['id_user'])
         update_user_validation(user['id_user'])
-@router.get("/getUserNotifications/{user_id}",tags=["notis"] )
+
+
+@router.get("/getUserNotifications/{user_id}", tags=["notis"])
 def getUser_Notifications(user_id: str):
     return getNotis(user_id)
+
+
 @router.put("/markNotificationAsRead/{notification_id}", tags=["Review"])
 async def markAsRead(notification_id: str):
     response = NotificationRead(notification_id)
     return {"message": response}
+
+
 @router.get("/PublicplatesNotFromUser/{user_id}", tags=['Plate'])
 def getNotUser_Publicplates(user_id: str):
     response = get_publicPlates_notUser(user_id)
     return response
+
+
 @router.get("/addGoal/{user_id}", tags=['gamification'])
-def addGoal_Touser(user_id: str,goal_id:int):
-    response = addGoal(user_id,goal_id)
+def addGoal_Touser(user_id: str, goal_id: int):
+    response = addGoal(user_id, goal_id)
     return response
 
 
+@router.get("/allergies", tags=['Allergies'])
+def get_allAlergies():
+    response = get_allergies()
+    return response
+
+
+@router.post("/allergie/", tags=["Allergies"])
+async def register_allergie(allergie: Allergies):
+    response = allergieLog(allergie)
+    return response
+
+
+@router.put("/allergie/{allergie_id}", tags=["Allergies"])
+async def Update_Allergie(allergie_id: str, EditAllergie: Allergies):
+    response = updateAllergie(allergie_id, EditAllergie)
+    return {"message": response}
