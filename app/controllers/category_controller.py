@@ -3,7 +3,7 @@ from app.models.category import Category
 from fastapi import HTTPException
 
 
-def userCategoryLog(category: create_category):
+def userCategoryLog(category: Category):
     response = create_category(category)
     if "error" in response:
         raise HTTPException(status_code=500, detail=response["error"])
