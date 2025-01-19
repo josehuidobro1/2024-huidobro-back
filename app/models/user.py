@@ -26,6 +26,7 @@ class UserRegister(BaseModel):
     goals: Optional[UserGoals]
     validation: int
     achivements: List[int]
+    allergies: List[str]
 
 
 class UserForgotPassword(BaseModel):
@@ -52,3 +53,4 @@ class UpdateUserData(BaseModel):
     goals: UserGoals
     validation: int
     achivements: List[int]
+    allergies: List[str]
