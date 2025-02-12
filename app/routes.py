@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, Request, HTTPException
 from app.models.food import Food
+from app.controllers.schedule_controller import scheduleLog, get_user_schedule, delete_schedule, update_schedule
 from app.controllers.allergies_controller import get_allergies, allergieLog, updateAllergie
 from app.controllers.user_controller import addGoal, update_user_info, delete_user_by_id, user_by_id, resetPassword, update_user_validation, get_all_Users
 from app.controllers.userTotCal_controller import updateDailyCalories_controller, createUserTotCal, get_TotCal, get_streak
@@ -15,6 +16,7 @@ from app.models.user import UserRegister, ResetPassword, UserForgotPassword, Use
 from app.controllers.drink_controller import register_new_drink, get_drinks, get_drink_by_id, deletedrink, Updatedrink, Grouped_Drinks
 # from app.controllers.user_controller import
 from app.models.catFood import CategoryFood
+from app.models.schedule import Schedule
 from app.models.category import Category
 from app.models.userFood import UserFood
 from app.models.plate import Plate
@@ -364,4 +366,28 @@ async def register_allergie(allergie: Allergies):
 @router.put("/allergie/{allergie_id}", tags=["Allergies"])
 async def Update_Allergie(allergie_id: str, EditAllergie: Allergies):
     response = updateAllergie(allergie_id, EditAllergie)
+    return {"message": response}
+
+
+@router.get("/schedule/{user_id}", tags=['Schedule'])
+def get_schedule(user_id):
+    response = get_user_schedule(user_id)
+    return response
+
+
+@router.post("/schedule/", tags=["Schedule"])
+async def create_schedule(schedule: Schedule):
+    response = scheduleLog(schedule)
+    return response
+
+
+@router.put("/schedule/{id}", tags=["Schedule"])
+async def update_schedule_data(id: str, EditSchedule: Schedule):
+    response = update_schedule(id, EditSchedule)
+    return {"message": response}
+
+
+@router.delete("/schedule/{user_id}", tags=["Schedule"])
+async def delete_user_schedule(user_id: str):
+    response = delete_schedule(user_id)
     return {"message": response}
