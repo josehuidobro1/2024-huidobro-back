@@ -11,7 +11,7 @@ from app.controllers.plate_controller import get_publicPlates_notUser, update_us
 from app.controllers.plateFood_controller import PlateFoodLog, update_PlateFood_controller, delete_PlateFood, get_plateFood
 from app.controllers.drinkType_controller import register_new_drinkType, get_drinkTypes, get_drinkType_by_id, UserDrinkTypes, delete_DrinkType
 from app.controllers.review_controller import reviewLog, UpdateReview, get_plateReviews, get_fiveStarReview
-from app.controllers.notification_controller import getNotis, NotificationRead
+from app.controllers.notification_controller import getNotis, NotificationRead, delete_notification
 from app.models.user import UserRegister, ResetPassword, UserForgotPassword, UserLogin, UpdateUserData
 from app.controllers.drink_controller import register_new_drink, get_drinks, get_drink_by_id, deletedrink, Updatedrink, Grouped_Drinks
 # from app.controllers.user_controller import
@@ -333,7 +333,7 @@ def getUser_Notifications(user_id: str):
 
 @router.put("/markNotificationAsRead/{notification_id}", tags=["Review"])
 async def markAsRead(notification_id: str):
-    response = NotificationRead(notification_id)
+    response = delete_notification(notification_id)
     return {"message": response}
 
 
