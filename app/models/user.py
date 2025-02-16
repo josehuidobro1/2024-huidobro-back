@@ -25,7 +25,7 @@ class UserRegister(BaseModel):
     birthDate: datetime
     goals: Optional[UserGoals]
     validation: int
-    achivements: List[int]
+    achievements: List[int]
     allergies: List[str]
 
 
@@ -52,5 +52,5 @@ class UpdateUserData(BaseModel):
     birthDate: datetime
     goals: UserGoals
     validation: int
-    achivements: List[int]
+    achievements: List[int]
     allergies: List[str]

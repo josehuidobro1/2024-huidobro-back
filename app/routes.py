@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Request, HTTPException
 from app.models.food import Food
 from app.controllers.schedule_controller import scheduleLog, get_user_schedule, delete_schedule, update_schedule
 from app.controllers.allergies_controller import get_allergies, allergieLog, updateAllergie
-from app.controllers.user_controller import addGoal, update_user_info, delete_user_by_id, user_by_id, resetPassword, update_user_validation, get_all_Users
+from app.controllers.user_controller import userLog, addGoal, update_user_info, delete_user_by_id, user_by_id, resetPassword, update_user_validation, get_all_Users
 from app.controllers.userTotCal_controller import updateDailyCalories_controller, createUserTotCal, get_TotCal, get_streak
 from app.controllers.food_controller import register_new_food, get_foods, get_food_by_id
 from app.controllers.category_controller import userCategoryLog, get_category, update_category_controller, delete_category
@@ -32,8 +32,6 @@ from .config import verify_token
 
 
 router = APIRouter()
-
-# Define a simple root endpoint
 
 
 @router.get("/", tags=["General"])

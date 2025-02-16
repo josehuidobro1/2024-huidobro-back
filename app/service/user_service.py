@@ -6,7 +6,6 @@ from app.service.review_service import getamountFiveStarReviews
 from datetime import datetime
 
 
-
 load_dotenv()
 api_key = os.getenv('FIREBASE_API_KEY')
 
@@ -55,12 +54,16 @@ def create_user(user_data):
             "surname": user_data.surname,
             "weight": user_data.weight,
             "height": user_data.height,
-            "birthDate": user_data.birthDate
+            "birthDate": user_data.birthDate,
+            "goals": user_data.goals,
+            "validation": user_data.validation,
+            "achievements": user_data.achievements,
+            "allergies": user_data.allergies,
         })
 
         return {"message": "User created and data saved successfully"}
     except Exception as e:
-        return {"error": str(e)}
+        return {"Eror create_user in user_service.py": str(e)}
 
 
 def delete_user(user_id):
@@ -178,6 +181,8 @@ def get_current_user_service(request):
     token = request.headers.get('Authorization').split("Bearer ")[1]
     decoded_token = verify_token(token)
     return decoded_token
+
+
 def update_uservalidation(user_id):
     try:
         count_verified_plates = getamountFiveStarReviews(user_id)
@@ -196,16 +201,16 @@ def update_uservalidation(user_id):
         else:
             user_ref = db.collection('User').where(
                 'id_user', '==', user_id).stream()
-            user_notify(user,level)
+            user_notify(user, level)
             user['validation'] = level
 
             for doc in user_ref:
                 doc.reference.update(user)
-            
-            
+
             return {"Updated"}
     except Exception as e:
         return {"error": str(e)}
+
 
 def get_allusers():
     try:
@@ -242,7 +247,6 @@ def user_notify(user, new_level):
         'is_read': False
     }
 
-
     try:
         new_review_ref = db.collection('UserNotifications').document()
         new_review_ref.set(data)
@@ -252,6 +256,7 @@ def user_notify(user, new_level):
         return {"error": str(e)}
 
     return {"notification": "Notification sent"}
+
 
 def notifyUserAchievement(message, user_id):
     data = {
@@ -274,25 +279,26 @@ def notifyUserAchievement(message, user_id):
 def complete_goal(user_id, goal_id):
     try:
         # Retrieve the user document
-        user_ref = db.collection('User').where('id_user', '==', user_id).stream()
+        user_ref = db.collection('User').where(
+            'id_user', '==', user_id).stream()
 
         # Extract user data from query result
         user_doc = next(user_ref, None)
         if not user_doc:
             return {"error": "User not found"}
-        
+
         user_data = user_doc.to_dict()
-        
+
         # Initialize achievements if they don't exist
         achievements = user_data.get('achievements', [])
-        
+
         # Only add if not already in the list
         if goal_id not in achievements:
             achievements.append(goal_id)
             user_doc.reference.update({'achievements': achievements})
             message = "Congratulations! You achieved a new goal!"
             result = notifyUserAchievement(message, user_id)
-        
+
             if "error" in result:
                 return {"error": f"Notification error: {result['error']}"}
 
@@ -300,8 +306,3 @@ def complete_goal(user_id, goal_id):
         return {"error": str(e)}
 
     return {"message": "Goal completed and notification sent"}
-
-
-
-
-
