@@ -57,7 +57,7 @@ async def delete_user(id_user: str):
 
 @router.post("/user/", tags=["User"])
 async def register_user(User: UserRegister):
-    userLog(User)
+    response = userLog(User)
     return {"message": "User log added!"}
 
 

@@ -4,7 +4,7 @@ import os
 from dotenv import load_dotenv
 from app.service.review_service import getamountFiveStarReviews
 from datetime import datetime
-
+from app.models.user import UserRegister
 
 load_dotenv()
 api_key = os.getenv('FIREBASE_API_KEY')
@@ -35,18 +35,18 @@ def login_user(user_data):
 # Crear un nuevo usuario en Firestore
 
 
-def create_user(user_data):
+def create_user(user_data: UserRegister):
     try:
-        user_ref = db.collection('User').document(user_data.id_user)
+        user_ref = db.collection('User').document(
+            user_data.id_user)  # Usa id_user como ID del documento
         user_ref.set({
             "id_user": user_data.id_user,
-            'email': user_data.email,
             "name": user_data.name,
             "surname": user_data.surname,
             "weight": user_data.weight,
             "height": user_data.height,
             "birthDate": user_data.birthDate,
-            "goals": user_data.goals,
+            "goals": user_data.goals.dict(),  # Convierte UserGoals a diccionario
             "validation": user_data.validation,
             "achievements": user_data.achievements,
             "allergies": user_data.allergies,

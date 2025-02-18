@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from datetime import datetime
-from typing import List
+from typing import List, Dict
 
 # Modelo para registrar un nuevo Food
 
@@ -22,7 +22,7 @@ class UserRegister(BaseModel):
     weight: float = Field(..., ge=0)
     height: float = Field(..., ge=0)
     birthDate: datetime
-    goals: List[UserGoals]
+    goals: UserGoals
     validation: int
     achievements: List[int]
     allergies: List[str]
@@ -53,3 +53,4 @@ class UpdateUserData(BaseModel):
     validation: int
     achievements: List[int]
     allergies: List[str]
+    schedule: Dict[str, List[str]]
