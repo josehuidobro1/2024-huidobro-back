@@ -17,7 +17,6 @@ class UserGoals(BaseModel):
 
 class UserRegister(BaseModel):
     id_user: str
-    email: str
     name: str
     surname: str
     weight: float = Field(..., ge=0)
