@@ -37,18 +37,9 @@ def login_user(user_data):
 
 def create_user(user_data):
     try:
-        # Extracting user data from the input
-
-        # Create a new user in Firebase Authentication
-        user_record = auth.create_user(
-            email=user_data.email,
-            password=user_data.password
-        )
-
-        # Save user details to Firestore
-        user_ref = db.collection('User').document(user_record.uid)
+        user_ref = db.collection('User').document(user_data.id_user)
         user_ref.set({
-            "id_user": user_record.uid,
+            "id_user": user_data.id_user,
             'email': user_data.email,
             "name": user_data.name,
             "surname": user_data.surname,

@@ -55,6 +55,12 @@ async def delete_user(id_user: str):
     return {"message": "User Delete succefully!"}
 
 
+@router.post("/user/", tags=["User"])
+async def register_user(User: UserRegister):
+    userLog(User)
+    return {"message": "User log added!"}
+
+
 @router.post("/Food_log/", tags=["Food"])
 async def register_food(Food: Food):
     # user_id = verify_token(token)
