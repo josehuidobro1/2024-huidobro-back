@@ -53,4 +53,3 @@ class UpdateUserData(BaseModel):
     validation: int
     achievements: List[int]
     allergies: List[str]
-    schedule: Dict[str, List[str]]
