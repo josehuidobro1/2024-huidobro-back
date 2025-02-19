@@ -1,4 +1,5 @@
 from firebase_admin import auth
+from fastapi import HTTPException
 
 
 def verify_token(token):
