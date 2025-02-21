@@ -68,10 +68,24 @@ def delete_user(user_id):
 
         if user_doc:
             user_doc.reference.delete()
+            related_collections = ['Category', 'Drink', 'UserFood']
 
-            food_ref = db.collection('Foods').where(
+            for collection_name in related_collections:
+                collection_ref = db.collection(collection_name).where(
+                    'id_User', '==', user_id).stream()
+                for doc in collection_ref:
+                    doc.reference.delete()
+
+            related_collections = ['DrinkType',  'Schedule', 'UserTotalCal']
+            for collection_name in related_collections:
+                collection_ref = db.collection(collection_name).where(
+                    'id_user', '==', user_id).stream()
+                for doc in collection_ref:
+                    doc.reference.delete()
+
+            collection_ref = db.collection('UserNotifications').where(
                 'user_id', '==', user_id).stream()
-            for doc in food_ref:
+            for doc in collection_ref:
                 doc.reference.delete()
 
             try:

@@ -5,7 +5,7 @@ from typing import List
 
 class FoodConsumed(BaseModel):
     food_id: str
-    quantity: int
+    quantity: float = Field(gt=0)
 
 
 class Schedule(BaseModel):

@@ -1,6 +1,7 @@
 from ..config import db
 from datetime import datetime, timedelta
 
+
 def create_drink(drink_data):
     try:
         new_drink_ref = db.collection('Drink').document()
@@ -8,6 +9,8 @@ def create_drink(drink_data):
         return {"message": "drink added successfully", "id": new_drink_ref.id}
     except Exception as e:
         return {"error": str(e)}
+
+
 def drinks(user_id):
     try:
         user_drinks_query = db.collection(
@@ -22,14 +25,18 @@ def drinks(user_id):
         return {"message": "List fetched successfully", "Drinks": drinks_list}
     except Exception as e:
         return {"error": str(e)}
+
+
 def drink_by_id(drink_id):
     try:
         # Referencia al documento del drinko
         drink_ref = db.collection('Drink').document(drink_id)
-        drink_doc =drink_ref.get()
+        drink_doc = drink_ref.get()
         return {"drink": drink_doc.to_dict(), "message": "drink get successful"}
     except Exception as e:
         return {"error": str(e)}
+
+
 def delete_drink(drink_id):
     try:
         # Referencia al documento del foodo
@@ -38,6 +45,8 @@ def delete_drink(drink_id):
         return {"message": "user drink  delete successful"}
     except Exception as e:
         return {"error": str(e)}
+
+
 def update_Drink(userDrink_id, Drink_data):
     try:
         updated_data = Drink_data.dict()
@@ -48,14 +57,17 @@ def update_Drink(userDrink_id, Drink_data):
     except Exception as e:
         return {"error": str(e)}
 
+
 def GroupedDrinks(user_id):
     try:
         # Fetch all drinks for the user
-        user_drinks_query = db.collection('Drink').where('id_User', '==', user_id)
+        user_drinks_query = db.collection(
+            'Drink').where('id_User', '==', user_id)
         user_drinks = user_drinks_query.stream()
 
         # Fetch drink types for both the user and the default types
-        drink_types_query = db.collection('DrinkType').where('id_user', 'in', [user_id, 'default'])
+        drink_types_query = db.collection('DrinkType').where(
+            'id_user', 'in', [user_id, 'default'])
         drink_types = drink_types_query.stream()
 
         # Create a dictionary to group the drinks by type
@@ -70,7 +82,8 @@ def GroupedDrinks(user_id):
             # Prepare the grouped structure
             grouped_drinks[drink_type.id] = {
                 'foods': [],  # Will hold drink IDs
-                'icon': drink_type_dict.get('icon', 'Wine Bottle'),  # Default to an icon if none
+                # Default to an icon if none
+                'icon': drink_type_dict.get('icon', 'Wine Bottle'),
                 'id_User': drink_type_dict['id_user'],
                 'name': drink_type_dict['name'],
                 'id': drink_type.id
@@ -90,5 +103,3 @@ def GroupedDrinks(user_id):
         return {"message": "List fetched successfully", "Drinks": list(grouped_drinks.values())}
     except Exception as e:
         return {"error": str(e)}
-
-

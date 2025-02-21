@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict
 from typing import List
 
 
@@ -12,4 +12,4 @@ class Category(BaseModel):
 
     class Config:
         # Esto facilita la conversión entre ORM (SQLAlchemy) y Pydantic.
-        orm_mode = True
+        model_config = ConfigDict(from_attributes=True)

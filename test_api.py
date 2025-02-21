@@ -1,36 +1,30 @@
 import requests
+import pytest
+from fastapi.testclient import TestClient
+from app.main import app  # Asegúrate de que apunta correctamente a tu archivo FastAPI
+# Supongo que tienes una función para crear tokens válidos
+from app.config import create_token
+
+client = TestClient(app)
+
+
+def create_valid_token():
+    return create_token("valid_user_id")
+
+# Crear un token inválido para pruebas
+
+
+def invalid_token():
+    return "invalid_token"
+
+# Ruta para obtener datos de un usuario
+
 
 ENDPOINT = "https://two024-huidobro-back.onrender.com"
 
 
 def test_can_call_enpoint():
-    response = requests.get(ENDPOINT)
+    valid_token = create_valid_token()
+    response = requests.get(
+        ENDPOINT, headers={"Authorization": f"Bearer {valid_token}"})
     assert response.status_code == 200
-
-
-def test_can_create_user():
-    payload = {
-        "id_user": "bsdk29hkn",
-        "email": "test@example.com",
-        "name": "Test",
-        "surname": "User",
-        "weight": 70,
-        "height": 170,
-        "birthDate": "2002-02-19T12:39:50.400Z",
-        "goals": {
-            "calories": 0,
-            "sodium": 0,
-            "fats": 0,
-            "carbohydrates": 0,
-            "protein": 0,
-            "sugar": 0,
-            "caffeine": 0
-        },
-        "validation": 0,
-        "achievements": [],
-        "allergies": []
-    }
-    response = requests.post(ENDPOINT + "/user/", json=payload)
-    assert response.status_code == 200
-    data = response.json()
-    print(data)

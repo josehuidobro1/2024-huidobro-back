@@ -9,8 +9,10 @@ def create_review(review_data):
     new_review_ref.set(review_data_dict)
 
     return new_review_ref.id
+
+
 def get_plate_reviews():
-    
+
     try:
         plate_ref = db.collection('Review')
         plate = plate_ref.stream()
@@ -20,10 +22,11 @@ def get_plate_reviews():
             plate_dict = plate.to_dict()
             plate_dict['id'] = plate.id
             plate_list.append(plate_dict)
-            
+
         return plate_list
     except Exception as e:
         return {"error": str(e)}, 500
+
 
 def update_Review(review_id, review_data):
     try:
@@ -34,6 +37,8 @@ def update_Review(review_id, review_data):
         return "Review updated successfully"
     except Exception as e:
         return {"error": str(e)}
+
+
 def getamountFiveStarReviews(id_user):
     try:
         # Step 1: Fetch all plates created by the user
@@ -60,9 +65,6 @@ def getamountFiveStarReviews(id_user):
                     five_star_count += 1
                     break  # Count each plate only once for 4.5+ rating
         return five_star_count
-    
+
     except Exception as e:
         return {"error": str(e)}
-
-
-    

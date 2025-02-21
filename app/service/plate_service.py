@@ -1,6 +1,7 @@
 from ..config import db
 from datetime import datetime, timedelta
 from app.service.review_service import getamountFiveStarReviews
+import requests
 
 
 def create_plate(plate_data):
@@ -33,6 +34,31 @@ def get_user_plates(id_user):
         return {"error": str(e)}
 
 
+def get_plates():
+    try:
+
+        plate_ref = db.collection('Plate')
+        plate = plate_ref.stream()
+        plate_list = []
+
+        for plate in plate:
+            plate_dict = plate.to_dict()
+            plate_dict['id'] = plate.id
+            plate_list.append(plate_dict)
+
+        products_url = "https://candv-back.onrender.com/products"
+        response = requests.get(products_url)
+
+        if response.status_code != 200:
+            return {"error": f"Failed to fetch products: {response.status_code}"}
+
+        products = response.json()
+        plates = plate_list + products['products']
+        return plates
+    except Exception as e:
+        return {"error": str(e)}
+
+
 def delete_Plate_service(userPlate_id):
     try:
         # Referencia al documento del plateo
@@ -51,7 +77,6 @@ def update_Plate(userPlate_id, plate_data):
         return {"message": "Plate updated successfully"}
     except Exception as e:
         return {"error": str(e)}
-        
 
 
 def getPlateByID(plate_id):
@@ -107,6 +132,8 @@ def get_public_plates():
         return Plate_list
     except Exception as e:
         return {"error": str(e)}
+
+
 def update_user_platestoverified(user_id):
     try:
         plates = get_user_plates(user_id)["Plates"]
@@ -130,6 +157,8 @@ def update_user_platestoverified(user_id):
 
     except Exception as e:
         return {"error": str(e)}
+
+
 def get_public_plates_notUser(user_id):
     try:
         # Query to get all public plates
@@ -139,17 +168,13 @@ def get_public_plates_notUser(user_id):
         Plate_list = []
         for Plate in user_Plates:
             Plate_dict = Plate.to_dict()
-            
+
             # Check if the plate does not belong to the provided user_id
             if Plate_dict.get('id_User') != user_id:
                 Plate_dict['id'] = Plate.id
                 Plate_list.append(Plate_dict)
-                
+
         return Plate_list
-    
+
     except Exception as e:
         return {"error": str(e)}
-
-
-
-

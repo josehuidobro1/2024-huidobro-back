@@ -18,7 +18,7 @@ def NotificationRead(noti_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-def delete_notification(notification_id: str):
+def delete_notification(id_user: str, notification_id: str):
     response = delete_noti_service(notification_id)
     if "error" in response:
         raise HTTPException(status_code=500, detail=response["error"])
