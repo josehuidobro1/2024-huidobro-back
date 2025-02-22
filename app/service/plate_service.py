@@ -2,6 +2,7 @@ from ..config import db
 from datetime import datetime, timedelta
 from app.service.review_service import getamountFiveStarReviews
 import requests
+from firebase_admin import firestore
 
 
 def create_plate(plate_data):
@@ -61,9 +62,27 @@ def get_plates():
 
 def delete_Plate_service(userPlate_id):
     try:
-        # Referencia al documento del plateo
         plate_ref = db.collection('Plate').document(userPlate_id)
         plate_ref.delete()
+        categories_ref = db.collection('Category').where(
+            'plates', 'array_contains', userPlate_id).stream()
+        for doc in categories_ref:
+            doc.reference.update(
+                {"plates": firestore.ArrayRemove([userPlate_id])})
+
+        schedules_ref = db.collection('Schedule').stream()
+        for schedule in schedules_ref:
+            schedule_data = schedule.to_dict()
+            updated_foodList = [food for food in schedule_data.get(
+                "foodList", []) if food["food_id"] != userPlate_id]
+            if len(updated_foodList) != len(schedule_data.get("foodList", [])):
+                schedule.reference.update({"foodList": updated_foodList})
+
+        user_food_ref = db.collection('UserFood').where(
+            'id_Food', '==', userPlate_id).stream()
+        for doc in user_food_ref:
+            doc.reference.delete()
+
         return {"message": "user  plate  delete successful"}
     except Exception as e:
         return {"error": str(e)}

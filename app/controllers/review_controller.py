@@ -6,7 +6,7 @@ from datetime import datetime
 
 
 def validate_limit(campo, minimo, maximo, label):
-    if type(campo) is not float or int:
+    if not isinstance(campo, (int, float)):
         raise HTTPException(
             status_code=400, detail=f"{label} must be a number")
     if not (minimo <= campo <= maximo):
@@ -21,23 +21,21 @@ def validate_review(review: Review | Update_Review):
         raise HTTPException(
             status_code=400, detail=f"Plate ID is not valid ")
 
-    plate_exist = get_plate_reviews()
-    existing_reviews = [rev['plate_Id'] for rev in plate_exist]
-    if review.plate_Id in existing_reviews:
-        raise HTTPException(
-            status_code=400, detail=f"Plate has already reviews ")
-    print(plate_exist)
-
     validate_limit(review.score, 0, 5, "score")
 
     if review.comments:
         for comment in review.comments:
-            validate_limit(comment.score, 0, 5, "score")
+            validate_limit(comment.score, 0, 5, "score comment")
 
 
 def reviewLog(review: Review):
     try:
         validate_review(review)
+        plate_exist = get_plate_reviews()
+        existing_reviews = [rev['plate_Id'] for rev in plate_exist]
+        if review.plate_Id in existing_reviews:
+            raise HTTPException(
+                status_code=400, detail=f"Plate has already reviews ")
         review_id = create_review(review)
         return {"message": "User review registered successfully", "id": review_id}
     except Exception as e:
@@ -47,6 +45,8 @@ def reviewLog(review: Review):
 def UpdateReview(review_id: str, updated_data: Update_Review):
     try:
         reviews = get_plate_reviews()
+        print(updated_data)
+        print(f"\nscore {type(updated_data.score)}\n")
         existing_reviews = [rev['id'] for rev in reviews]
         if review_id not in existing_reviews:
             raise HTTPException(

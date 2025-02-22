@@ -17,6 +17,16 @@ def allergies():
         return {"error": str(e)}, 500
 
 
+def get_allergie(id_allergie):
+    try:
+        allergie_ref = db.collection('Allergies').document(id_allergie)
+        allergie = allergie_ref.get()
+
+        return {"allergie": allergie.to_dict(), "message": "Allergies get successful"}
+    except Exception as e:
+        return {"error": str(e)}, 500
+
+
 def post_allergie(allergie):
     try:
         new_allergie_ref = db.collection('Allergies').document()

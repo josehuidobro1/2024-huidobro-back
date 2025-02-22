@@ -3,6 +3,7 @@ from ..config import db
 
 def user_schedule(schedule_data):
     try:
+        print(f'\n schedule_data : {schedule_data}')
         # Convert the Pydantic model to a dictionary
         schedule_data_dict = schedule_data.dict()
 

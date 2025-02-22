@@ -561,7 +561,7 @@ async def register_newReview(review: Review, request: Request):
 
 
 @router.put("/UpdateReview/{review_id}", tags=["Review"])
-async def UpdateReview(review_id: str, ReviewUpdate: Update_Review, request: Request):
+async def update_Review(review_id: str, ReviewUpdate: Update_Review, request: Request):
     user = verify_token(request.headers.get("Authorization"))
     if not user:
         raise HTTPException(status_code=401, detail="Invalid token")
@@ -675,7 +675,7 @@ async def create_schedule(schedule: Schedule, request: Request):
     if id_user != schedule.id_user:
         raise HTTPException(
             status_code=400, detail=f"User id is not valid")
-    response = scheduleLog(id_user, schedule)
+    response = scheduleLog(schedule)
     return response
 
 

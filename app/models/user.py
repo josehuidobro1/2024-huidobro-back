@@ -6,13 +6,13 @@ from typing import List
 
 
 class UserGoals(BaseModel):
-    calories: int = Field(ge=0, default=0)
-    sodium: int = Field(ge=0, default=0)
-    fats: int = Field(ge=0, default=0)
-    carbohydrates: int = Field(ge=0, default=0)
-    protein: int = Field(ge=0, default=0)
-    sugar: int = Field(ge=0, default=0)
-    caffeine: int = Field(ge=0, default=0)
+    calories: int = Field(ge=0, le=5000, default=0)
+    sodium: int = Field(ge=0, le=3000, default=0)
+    fats: int = Field(ge=0, le=100, default=0)
+    carbohydrates: int = Field(ge=0, le=400, default=0)
+    protein: int = Field(ge=0, le=500, default=0)
+    sugar: int = Field(ge=0, le=100, default=0)
+    caffeine: int = Field(ge=0, le=600, default=0)
 
 
 class UserRegister(BaseModel):

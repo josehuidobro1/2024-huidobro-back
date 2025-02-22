@@ -3,6 +3,8 @@ from app.models.userFood import UserFood
 from fastapi import HTTPException
 from datetime import datetime
 from app.controllers.food_controller import get_food_by_id, get_foods
+from app.service.drink_service import drinks
+from app.service.plate_service import get_plates
 
 
 def validate_date(date, label):
@@ -26,7 +28,20 @@ def validate_foodLog(userFood: UserFood):
 
 
 def userFoodLog(userFood: UserFood):
-    get_food_by_id(userFood.id_Food)
+    foods = get_foods()
+    existing_food_ids = [food["id"]
+                         for food in foods["message"]['food']]
+
+    user_drinks = drinks(userFood.id_User)
+    existing_drinks_ids = [drink["id"] for drink in user_drinks['Drinks']]
+
+    plates = get_plates()
+    existing_plate_ids = [plate["id"] for plate in plates]
+
+    existing_ids = existing_food_ids+existing_drinks_ids+existing_plate_ids
+    if userFood.id_Food not in existing_ids:
+        raise HTTPException(
+            status_code=400, detail=f" Invalid Food_ID  ")
     validate_foodLog(userFood)
     response = create_food_user_service(userFood)
     if "error" in response:

@@ -2,6 +2,8 @@ from app.service.schedule_service import update_schedule_user, user_schedule, ge
 from app.models.schedule import Schedule
 from app.controllers.food_controller import get_foods
 from fastapi import HTTPException
+from app.service.plate_service import get_plates
+from app.service.drink_service import drinks
 import re
 
 days = ["monday", "tuesday", "wednesday",
@@ -18,14 +20,16 @@ def validate_limit(campo, minimo, label):
 
 
 def validate_schedule(id_user: str, schedule: Schedule):
-    days_register = [item['day']
-                     for item in get_schedule_user(id_user)["message"]["schedules"]]
-    if schedule.day in days_register:
-        raise HTTPException(
-            status_code=400, detail=f"It already exuist a schedule for that day ")
-    foods_ID = [item["id"] for item in get_foods()["message"]['food']]
+    foods = get_foods()
+    existing_food_ids = [food["id"]
+                         for food in foods["message"]['food']]
+    user_drinks = drinks(id_user)
+    existing_drinks_ids = [drink["id"] for drink in user_drinks['Drinks']]
+    plates = get_plates()
+    existing_plate_ids = [plate["id"] for plate in plates]
+    existind_ids = existing_food_ids+existing_drinks_ids+existing_plate_ids
     for food in schedule.foodList:
-        if food.food_id not in foods_ID:
+        if food.food_id not in existind_ids:
             raise HTTPException(
                 status_code=400, detail=f"the food ID {food.food_id} is not valid ")
         validate_limit(food.quantity, 0,
@@ -35,11 +39,18 @@ def validate_schedule(id_user: str, schedule: Schedule):
             status_code=400, detail=f" The day is not valid ")
 
 
-def scheduleLog(id_user: str, schedule: Schedule):
+def scheduleLog(schedule: Schedule):
+    days_register = [item['day']
+                     for item in get_schedule_user(schedule.id_user)["message"]["schedules"]]
+    if schedule.day in days_register:
+        raise HTTPException(
+            status_code=400, detail=f"It already exist a schedule for that day ")
+
     if len(schedule.foodList) == 0:
         raise HTTPException(
             status_code=400, detail=f" The food list is empty ")
-    response = user_schedule(id_user, schedule)
+    validate_schedule(schedule.id_user, schedule)
+    response = user_schedule(schedule)
     if "error" in response:
         raise HTTPException(status_code=500, detail=response["error"])
     return {"message": "Schedule registered successfully"}

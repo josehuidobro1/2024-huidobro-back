@@ -31,8 +31,8 @@ def get_plate_reviews():
 def update_Review(review_id, review_data):
     try:
         updated_data = review_data.dict()
-        Plate_ref = db.collection('Review').document(review_id)
-        Plate_ref.update(updated_data)
+        Review_ref = db.collection('Review').document(review_id)
+        Review_ref.update(updated_data)
 
         return "Review updated successfully"
     except Exception as e:

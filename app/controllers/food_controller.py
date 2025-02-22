@@ -60,8 +60,6 @@ def validate_existance(items, itemSearch, id, label):
 
 def get_food_by_id(food_id: str):
 
-    foods_created = get_foods()
-    validate_existance(foods_created['message']['food'], 'id', food_id, 'food')
     response = food_by_id(food_id)
     if "error" in response:
         raise HTTPException(status_code=500, detail=response["error"])
