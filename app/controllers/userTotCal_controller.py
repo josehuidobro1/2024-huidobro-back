@@ -14,7 +14,7 @@ def validate_limit(campo, minimo, label):
     if type(campo) is not float:
         raise HTTPException(
             status_code=400, detail=f"{label} must be a float")
-    if not (minimo < campo):
+    if not (minimo <= campo):
         raise HTTPException(
             status_code=400, detail=f"{label} must be grater than {minimo} ")
 
