@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, Request, HTTPException, Security
 from app.models.food import Food
+import requests
 from app.controllers.schedule_controller import scheduleLog, get_user_schedule, delete_schedule, update_schedule
 from app.controllers.allergies_controller import get_allergies, allergieLog, updateAllergie
 from app.controllers.user_controller import userLog, login, addGoal, update_user_info, delete_user_by_id, user_by_id, resetPassword, update_user_validation, get_all_Users
@@ -153,6 +154,51 @@ async def get_food(food_id: str, request: Request):
         raise HTTPException(status_code=401, detail="Invalid token")
     id_user = user.get("user_id")
     return get_food_by_id(food_id)
+
+# ________________________-- PRODUCT ______________________________
+
+
+@router.get("/products/", tags=["Products"])
+async def get_products(request: Request):
+    user = verify_token(request.headers.get(
+        "Authorization"))  # Verifica el token
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    response = requests.get(f"https://candv-back.onrender.com/products")
+    if response.status_code != 200:
+        raise HTTPException(status_code=response.status_code,
+                            detail="Error fetching products")
+
+    return response.json()
+
+
+@router.get("/products/{prod_id}", tags=["Products"])
+async def get_product_by_id(prod_id: str, request: Request):
+    user = verify_token(request.headers.get("Authorization"))
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    response = requests.get(
+        f"https://candv-back.onrender.com/products/{prod_id}")
+    if response.status_code != 200:
+        raise HTTPException(status_code=response.status_code,
+                            detail="Product not found")
+
+    return response.json()
+
+
+@router.put("/products/{id}/calories/{calories}", tags=["Products"])
+async def edit_calories(id: str, calories: int, request: Request):
+    user = verify_token(request.headers.get("Authorization"))
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    response = requests.put(
+        f"https://candv-back.onrender.com/add-calories/{id}/{calories}")
+    if response.status_code != 200:
+        raise HTTPException(status_code=response.status_code,
+                            detail="Error updating calories")
 
 # ------------------------ MEAL ---------------------------
 
